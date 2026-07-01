@@ -3,31 +3,27 @@ import type { Post } from "@/lib/types"
 
 export const PUBLISHED_STATUSES = ["완료", "메인"] as const
 
-export async function getRecentPosts(limit = 5): Promise<Post[]> {
-  const { data } = await supabase
+function publishedPosts() {
+  return supabase
     .from("posts")
     .select("*")
     .in("status", PUBLISHED_STATUSES)
     .order("date", { ascending: false })
-    .limit(limit)
+}
+
+export async function getRecentPosts(limit = 5): Promise<Post[]> {
+  const { data } = await publishedPosts().limit(limit)
   return data ?? []
 }
 
 export async function getAllPosts(): Promise<Post[]> {
-  const { data } = await supabase
-    .from("posts")
-    .select("*")
-    .in("status", PUBLISHED_STATUSES)
-    .order("date", { ascending: false })
+  const { data } = await publishedPosts()
   return data ?? []
 }
 
 export async function getPost(slug: string): Promise<Post | null> {
-  const { data } = await supabase
-    .from("posts")
-    .select("*")
+  const { data } = await publishedPosts()
     .or(`slug.eq.${slug},notion_id.eq.${slug}`)
-    .in("status", PUBLISHED_STATUSES)
     .single()
   return data
 }

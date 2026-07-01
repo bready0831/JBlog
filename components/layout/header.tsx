@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import Container from "@/components/layout/container";
+import ThemeToggle from "@/components/layout/theme-toggle";
 
 const NAV = [
   { href: "/", label: "Home" },
@@ -33,6 +34,7 @@ export default function Header() {
               {label}
             </Link>
           ))}
+          <ThemeToggle />
         </nav>
       </Container>
     </header>
