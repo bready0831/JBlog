@@ -111,6 +111,31 @@ async function fetchBlocks(blockId: string): Promise<any[]> {
   return blocks
 }
 
+// ── 이미지 Storage 업로드 ─────────────────────────────────────────────────
+
+async function uploadImage(notionUrl: string, blockId: string): Promise<string> {
+  try {
+    const res = await fetch(notionUrl)
+    if (!res.ok) return notionUrl
+
+    const contentType = res.headers.get('content-type') ?? 'image/jpeg'
+    const ext = contentType.split('/')[1]?.split(';')[0] ?? 'jpg'
+    const path = `notion/${blockId}.${ext}`
+
+    const buffer = await res.arrayBuffer()
+    const { error } = await supabase.storage
+      .from('post-images')
+      .upload(path, buffer, { contentType, upsert: true })
+
+    if (error) return notionUrl
+
+    const { data } = supabase.storage.from('post-images').getPublicUrl(path)
+    return data.publicUrl
+  } catch {
+    return notionUrl
+  }
+}
+
 // ── Block → Markdown 변환 ──────────────────────────────────────────────────
 
 function richTextToMd(richText: any[]): string {
@@ -125,71 +150,128 @@ function richTextToMd(richText: any[]): string {
   }).join('')
 }
 
+const LANG_MAP: Record<string, string> = {
+  'plain text': 'text',
+  'javascript': 'javascript',
+  'typescript': 'typescript',
+  'python': 'python',
+  'bash': 'bash',
+  'shell': 'bash',
+  'sql': 'sql',
+  'json': 'json',
+  'html': 'html',
+  'css': 'css',
+  'yaml': 'yaml',
+  'markdown': 'markdown',
+  'rust': 'rust',
+  'go': 'go',
+  'java': 'java',
+  'kotlin': 'kotlin',
+  'swift': 'swift',
+  'c': 'c',
+  'c++': 'cpp',
+  'c#': 'csharp',
+}
+
+function normalizeLang(lang: string): string {
+  return LANG_MAP[lang?.toLowerCase()] ?? lang ?? ''
+}
+
 async function blocksToMarkdown(blocks: any[], depth = 0): Promise<string> {
   const indent = '  '.repeat(depth)
-  const lines: string[] = []
+  const segments: string[] = []
+  let listBuffer: string[] = []
+  let listType: 'bullet' | 'number' | null = null
+
+  function flushList() {
+    if (listBuffer.length === 0) return
+    segments.push(listBuffer.join('\n'))
+    listBuffer = []
+    listType = null
+  }
 
   for (const block of blocks) {
     const type = block.type
     const b    = block[type]
 
+    if (type === 'bulleted_list_item') {
+      if (listType === 'number') flushList()
+      listType = 'bullet'
+      listBuffer.push(`${indent}- ${richTextToMd(b.rich_text)}`)
+      if (block.has_children) {
+        const children = await fetchBlocks(block.id)
+        listBuffer.push(await blocksToMarkdown(children, depth + 1))
+      }
+      continue
+    }
+
+    if (type === 'numbered_list_item') {
+      if (listType === 'bullet') flushList()
+      listType = 'number'
+      listBuffer.push(`${indent}${listBuffer.length + 1}. ${richTextToMd(b.rich_text)}`)
+      if (block.has_children) {
+        const children = await fetchBlocks(block.id)
+        listBuffer.push(await blocksToMarkdown(children, depth + 1))
+      }
+      continue
+    }
+
+    flushList()
+
     switch (type) {
       case 'paragraph':
-        lines.push(richTextToMd(b.rich_text) || '')
+        segments.push(richTextToMd(b.rich_text) || '')
         break
       case 'heading_1':
-        lines.push(`# ${richTextToMd(b.rich_text)}`)
+        segments.push(`# ${richTextToMd(b.rich_text)}`)
         break
       case 'heading_2':
-        lines.push(`## ${richTextToMd(b.rich_text)}`)
+        segments.push(`## ${richTextToMd(b.rich_text)}`)
         break
       case 'heading_3':
-        lines.push(`### ${richTextToMd(b.rich_text)}`)
+        segments.push(`### ${richTextToMd(b.rich_text)}`)
         break
-      case 'bulleted_list_item':
-        lines.push(`${indent}- ${richTextToMd(b.rich_text)}`)
+      case 'code': {
+        const lang = normalizeLang(b.language)
+        segments.push(`\`\`\`${lang}\n${richTextToMd(b.rich_text)}\n\`\`\``)
         break
-      case 'numbered_list_item':
-        lines.push(`${indent}1. ${richTextToMd(b.rich_text)}`)
-        break
-      case 'code':
-        lines.push(`\`\`\`${b.language ?? ''}\n${richTextToMd(b.rich_text)}\n\`\`\``)
-        break
+      }
       case 'quote':
-        lines.push(`> ${richTextToMd(b.rich_text)}`)
+        segments.push(`> ${richTextToMd(b.rich_text)}`)
         break
       case 'callout':
-        lines.push(`> ${b.icon?.emoji ?? ''} ${richTextToMd(b.rich_text)}`)
+        segments.push(`> ${b.icon?.emoji ?? ''} ${richTextToMd(b.rich_text)}`)
         break
       case 'divider':
-        lines.push('---')
+        segments.push('---')
         break
       case 'image': {
-        const url = b.type === 'external' ? b.external.url : b.file?.url
+        const notionUrl = b.type === 'external' ? b.external.url : b.file?.url
         const caption = richTextToMd(b.caption)
-        lines.push(`![${caption}](${url})`)
+        const storedUrl = await uploadImage(notionUrl, block.id)
+        segments.push(`![${caption}](${storedUrl})`)
         break
       }
       case 'toggle':
-        lines.push(`<details><summary>${richTextToMd(b.rich_text)}</summary>`)
+        segments.push(`<details><summary>${richTextToMd(b.rich_text)}</summary>`)
         if (block.has_children) {
           const children = await fetchBlocks(block.id)
-          lines.push(await blocksToMarkdown(children, depth + 1))
+          segments.push(await blocksToMarkdown(children, depth + 1))
         }
-        lines.push('</details>')
+        segments.push('</details>')
         break
       default:
         break
     }
 
-    // 자식 블록이 있는 경우 (toggle 제외)
-    if (block.has_children && type !== 'toggle') {
+    if (block.has_children && !['toggle', 'bulleted_list_item', 'numbered_list_item'].includes(type)) {
       const children = await fetchBlocks(block.id)
-      lines.push(await blocksToMarkdown(children, depth + 1))
+      segments.push(await blocksToMarkdown(children, depth + 1))
     }
   }
 
-  return lines.join('\n\n')
+  flushList()
+  return segments.join('\n\n')
 }
 
 // ── 페이지 동기화 ──────────────────────────────────────────────────────────
