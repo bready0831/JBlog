@@ -51,7 +51,7 @@ export default async function PostPage({
         <Separator className="mb-8" />
 
         {post.thumbnail_url && (
-          <div className="relative w-full aspect-[4/3] overflow-hidden rounded-xl mb-10">
+          <div className="relative w-full aspect-4/3 overflow-hidden rounded-xl mb-10">
             <Image
               src={post.thumbnail_url}
               alt={post.title}
