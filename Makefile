@@ -1,5 +1,5 @@
 SUPABASE_ANON_KEY ?= $(shell grep NEXT_PUBLIC_SUPABASE_ANON_KEY .env.local 2>/dev/null | cut -d= -f2)
-SUPABASE_FUNCTIONS_URL = https://ipoapbobbdqkrbjswbsd.supabase.co/functions/v1
+SUPABASE_FUNCTIONS_URL ?= $(shell grep SUPABASE_FUNCTIONS_URL .env.local 2>/dev/null | cut -d= -f2)
 
 .PHONY: dev db-push \
 	deploy-sync deploy-sync-all sync-post sync-all \
