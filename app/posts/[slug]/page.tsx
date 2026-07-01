@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import PostContent from "@/components/post/post-content";
 import Container from "@/components/layout/container";
@@ -48,6 +49,18 @@ export default async function PostPage({
         </header>
 
         <Separator className="mb-8" />
+
+        {post.thumbnail_url && (
+          <div className="relative w-full aspect-[4/3] overflow-hidden rounded-xl mb-10">
+            <Image
+              src={post.thumbnail_url}
+              alt={post.title}
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        )}
 
         {post.content ? (
           <PostContent content={post.content} />
