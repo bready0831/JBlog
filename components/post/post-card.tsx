@@ -22,8 +22,8 @@ export default function PostCard({ post }: { post: Post }) {
           <h2 className="text-2xl font-semibold mb-3 font-display group-hover:text-muted-foreground transition-colors leading-snug">
             {post.title}
           </h2>
-          <p className="text-base text-muted-foreground leading-relaxed mb-4 line-clamp-2 h-[3.25rem]">
-            {post.description ?? ''}
+          <p className="text-base text-muted-foreground leading-relaxed mb-4 line-clamp-2 h-13">
+            {post.description ?? ""}
           </p>
           <div className="flex items-center gap-3 mt-1">
             {post.date && (
@@ -43,7 +43,7 @@ export default function PostCard({ post }: { post: Post }) {
           </div>
         </div>
         {post.thumbnail_url && (
-          <div className="relative w-48 shrink-0 overflow-hidden rounded-xl bg-muted aspect-[4/3]">
+          <div className="relative w-48 shrink-0 overflow-hidden rounded-xl bg-muted aspect-4/3">
             <Image
               src={post.thumbnail_url}
               alt={post.title}

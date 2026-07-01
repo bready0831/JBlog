@@ -7,7 +7,7 @@ export const supabase = createClient(
 
 const NOTION_TOKEN    = Deno.env.get('NOTION_TOKEN')!
 const NOTION_DB_ID    = Deno.env.get('NOTION_DATABASE_ID')!
-const NOTION_VERSION  = '2022-06-28'
+export const NOTION_VERSION  = '2022-06-28'
 
 // ── Notion API ────────────────────────────────────────────────────────────────
 
@@ -19,7 +19,7 @@ function notionHeaders() {
   }
 }
 
-export async function fetchAllPages() {
+export async function fetchAllPages(dbId = NOTION_DB_ID) {
   const pages: any[] = []
   let cursor: string | undefined
 
@@ -27,7 +27,7 @@ export async function fetchAllPages() {
     const body: any = { page_size: 100 }
     if (cursor) body.start_cursor = cursor
 
-    const res = await fetch(`https://api.notion.com/v1/databases/${NOTION_DB_ID}/query`, {
+    const res = await fetch(`https://api.notion.com/v1/databases/${dbId}/query`, {
       method: 'POST',
       headers: notionHeaders(),
       body: JSON.stringify(body),
@@ -42,7 +42,7 @@ export async function fetchAllPages() {
   return pages
 }
 
-async function fetchBlocks(blockId: string): Promise<any[]> {
+export async function fetchBlocks(blockId: string): Promise<any[]> {
   const blocks: any[] = []
   let cursor: string | undefined
 
@@ -129,7 +129,7 @@ function normalizeLang(lang: string): string {
   return LANG_MAP[lang?.toLowerCase()] ?? lang ?? ''
 }
 
-async function blocksToMarkdown(blocks: any[], depth = 0): Promise<string> {
+export async function blocksToMarkdown(blocks: any[], depth = 0): Promise<string> {
   const indent = '  '.repeat(depth)
   const segments: string[] = []
   let listBuffer: string[] = []

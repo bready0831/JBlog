@@ -11,7 +11,7 @@ const geistMono = Geist_Mono({
 });
 const notoSerifKR = Noto_Serif_KR({
   variable: "--font-serif",
-  subsets: ["latin", "korean"],
+  subsets: ["latin"],
   weight: ["400", "500", "700"],
 });
 

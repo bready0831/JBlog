@@ -1,3 +1,19 @@
+export interface Book {
+  id: string
+  notion_id: string
+  title: string
+  slug: string | null
+  status: string | null
+  category: string | null
+  tags: string[]
+  date: string | null
+  thumbnail_url: string | null
+  content: string | null
+  notion_last_edited_at: string | null
+  created_at: string
+  updated_at: string
+}
+
 export interface Post {
   id: string
   notion_id: string

@@ -17,7 +17,7 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="absolute top-0 left-0 right-0 z-10 py-5">
+    <header className="fixed top-0 left-0 right-0 z-10 py-5 bg-background/70 backdrop-blur-md">
       <Container className="flex justify-end">
         <nav className="flex items-center gap-8">
           {NAV.map(({ href, label }) => (
