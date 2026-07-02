@@ -61,11 +61,11 @@ export default function AboutPage() {
   return (
     <Container className="pt-32 pb-20">
       {/* 상단: 태그라인 + 사진 */}
-      <div className="flex items-start justify-between gap-8 mb-14">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 sm:gap-8 mb-14">
         <h1 className="text-4xl sm:text-5xl font-sans font-light leading-tight break-keep">
           {renderTagline(author.tagline)}
         </h1>
-        <div className="relative shrink-0 w-36 h-36 sm:w-44 sm:h-44 rounded-2xl overflow-hidden bg-muted">
+        <div className="relative shrink-0 w-full h-64 sm:w-44 sm:h-44 rounded-2xl overflow-hidden bg-muted">
           <Image
             src={author.avatar}
             alt={author.name}

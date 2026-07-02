@@ -11,8 +11,18 @@ export default function PostCard({ post }: { post: Post }) {
     <>
       <Link
         href={href}
-        className="group flex items-start justify-between gap-6 py-8"
+        className="group flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 sm:gap-6 py-8"
       >
+        {post.thumbnail_url && (
+          <div className="relative w-full sm:hidden overflow-hidden rounded-xl bg-muted aspect-video">
+            <Image
+              src={post.thumbnail_url}
+              alt={post.title}
+              fill
+              className="object-cover"
+            />
+          </div>
+        )}
         <div className="flex-1 min-w-0">
           {post.category && (
             <p className="text-sm text-muted-foreground mb-2 font-display">
@@ -43,7 +53,7 @@ export default function PostCard({ post }: { post: Post }) {
           </div>
         </div>
         {post.thumbnail_url && (
-          <div className="relative w-48 shrink-0 overflow-hidden rounded-xl bg-muted aspect-4/3">
+          <div className="relative hidden sm:block w-48 shrink-0 overflow-hidden rounded-xl bg-muted aspect-4/3">
             <Image
               src={post.thumbnail_url}
               alt={post.title}
