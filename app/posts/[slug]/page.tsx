@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import PostContent from "@/components/post/post-content";
+import ViewTracker from "@/components/post/view-tracker";
 import Container from "@/components/layout/container";
 import { getPost } from "@/lib/posts";
 import { formatDate } from "@/lib/utils";
@@ -31,6 +32,7 @@ export default async function PostPage({
 
   return (
     <Container className="pt-24 pb-20">
+      <ViewTracker slug={slug} />
       <article>
         <header className="mb-8">
           <h1 className="text-4xl font-bold tracking-tight mb-3 font-display">
