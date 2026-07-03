@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase"
 import type { Book } from "@/lib/types"
 
-const VISIBLE_STATUSES = ["진행 중", "완료"] as const
+const VISIBLE_STATUSES = ["읽는 중", "완료"] as const
 
 function visibleBooks() {
   return supabase

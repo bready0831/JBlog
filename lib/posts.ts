@@ -27,3 +27,9 @@ export async function getPost(slug: string): Promise<Post | null> {
     .single()
   return data
 }
+
+export async function getPostsBySlugs(slugs: string[]): Promise<Post[]> {
+  if (slugs.length === 0) return []
+  const { data } = await publishedPosts().in("slug", slugs)
+  return data ?? []
+}

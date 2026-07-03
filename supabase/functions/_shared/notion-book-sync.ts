@@ -20,13 +20,23 @@ export async function syncBook(page: any) {
   const status      = props['Status']?.status?.name ?? null
   const category    = props['Category']?.select?.name ?? null
   const tags        = props['Tag']?.multi_select?.map((t: any) => t.name) ?? []
-  const date        = props['Date']?.date?.start ?? null
+  const date           = props['Date']?.date?.start ?? null
+  const relatedPostIds = (props['post']?.relation ?? []).map((r: any) => r.id)
 
   const coverUrl      = await extractCoverUrl(page)
   const thumbnail_url = coverUrl ? await uploadImage(coverUrl, `book-cover-${page.id}`) : null
 
   const blocks  = await fetchBlocks(page.id)
   const content = await blocksToMarkdown(blocks)
+
+  let related_post_slugs: string[] = []
+  if (relatedPostIds.length > 0) {
+    const { data } = await supabase
+      .from('posts')
+      .select('slug, notion_id')
+      .in('notion_id', relatedPostIds)
+    related_post_slugs = (data ?? []).map((p: any) => p.slug).filter(Boolean)
+  }
 
   const { error } = await supabase.from('books').upsert(
     {
@@ -39,6 +49,7 @@ export async function syncBook(page: any) {
       date,
       thumbnail_url,
       content: content || null,
+      related_post_slugs,
       notion_last_edited_at: page.last_edited_time,
     },
     { onConflict: 'notion_id' }

@@ -9,6 +9,7 @@ export interface Book {
   date: string | null
   thumbnail_url: string | null
   content: string | null
+  related_post_slugs: string[]
   notion_last_edited_at: string | null
   created_at: string
   updated_at: string
