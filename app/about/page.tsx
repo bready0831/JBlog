@@ -5,8 +5,18 @@ import { siteConfig } from "@/lib/site";
 
 function MailIcon({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className={className}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      className={className}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+      />
     </svg>
   );
 }
@@ -65,21 +75,15 @@ export default function AboutPage() {
         <h1 className="text-4xl sm:text-5xl font-sans font-light leading-tight break-keep">
           {renderTagline(author.tagline)}
         </h1>
-        <div className="relative shrink-0 w-full h-64 sm:w-44 sm:h-44 rounded-2xl overflow-hidden bg-muted">
-          <Image
-            src={author.avatar}
-            alt={author.name}
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
       </div>
 
       {/* 소개글 */}
       <div className="space-y-5 mb-16">
         {author.bio.split("\n\n").map((paragraph, i) => (
-          <p key={i} className="font-display text-base leading-loose text-foreground/80 break-keep">
+          <p
+            key={i}
+            className="font-display text-base leading-loose text-foreground/80 break-keep"
+          >
             {paragraph}
           </p>
         ))}
@@ -98,7 +102,11 @@ export default function AboutPage() {
               aria-label={social.label}
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
-              {Icon ? <Icon className="w-6 h-6" /> : <span className="text-sm">{social.label}</span>}
+              {Icon ? (
+                <Icon className="w-6 h-6" />
+              ) : (
+                <span className="text-sm">{social.label}</span>
+              )}
             </Link>
           );
         })}

@@ -18,9 +18,11 @@ export default async function HomePage() {
         <h1 className="text-5xl font-semibold tracking-wide mb-4 font-display">
           Bready Library
         </h1>
-        <p className="text-muted-foreground text-base mb-6">개발과 사유의 기록.</p>
+        <p className="text-muted-foreground text-base mb-6">
+          개발과 사유의 기록
+        </p>
         <p className="text-xs tracking-widest text-muted-foreground/60 uppercase">
-          Backend · Frontend · Essay · Insight
+          Software Architecture · Mathmatics · Hardware · Insight
         </p>
         <div className="absolute bottom-0 left-0 right-0 h-20 bg-linear-to-b from-transparent to-background" />
       </section>
