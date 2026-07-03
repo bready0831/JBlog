@@ -7,7 +7,7 @@ import rehypeHighlight from "rehype-highlight";
 const PROSE_CLASSES =
   "prose prose-base prose-zinc max-w-none dark:prose-invert " +
   "prose-p:mt-4 prose-p:mb-8 prose-p:leading-7 prose-p:font-normal " +
-  "prose-li:font-normal prose-li:my-1 prose-ol:my-4 prose-ul:my-4 " +
+  "prose-li:font-normal prose-li:my-1 " +
   "prose-headings:mt-12 prose-headings:mb-2 prose-headings:font-semibold";
 
 const sansStyle = { fontFamily: "var(--font-geist-sans)" };

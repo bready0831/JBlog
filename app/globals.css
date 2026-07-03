@@ -134,6 +134,19 @@
   margin-bottom: 0.2rem !important;
 }
 
+/* 리스트 바로 앞 단락 하단 간격 축소 */
+.prose p:has(+ ul),
+.prose p:has(+ ol) {
+  margin-bottom: 0.25rem !important;
+}
+
+/* 단락 다음 리스트의 상단 마진 제거 */
+.prose p + ul,
+.prose p + ol {
+  margin-top: 0 !important;
+}
+
+
 .prose :where(code):not(pre code) {
   background-color: var(--secondary);
   color: #c0392b;
