@@ -39,7 +39,7 @@ export default async function BookPage({
       {/* 본문 */}
       <div className="px-6">
         {book.thumbnail_url && (
-          <div className="relative w-36 aspect-[5/7] overflow-hidden rounded-md shadow-[4px_4px_8px_rgba(0,0,0,0.15)] mb-8">
+          <div className="relative w-36 aspect-5/7 overflow-hidden rounded-md shadow-[4px_4px_8px_rgba(0,0,0,0.15)] mb-8">
             <Image
               src={book.thumbnail_url}
               alt={book.title}

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState, useSyncExternalStore } from "react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import {
   Carousel,
@@ -17,7 +17,7 @@ function CarouselCard({ book }: { book: Book }) {
 
   return (
     <Link href={href} className="block">
-      <div className="relative aspect-[5/7] w-full overflow-hidden rounded-md bg-muted shadow-[4px_4px_8px_rgba(0,0,0,0.15)] transition-transform duration-300 hover:-translate-y-2">
+      <div className="relative aspect-5/7 w-full overflow-hidden rounded-md bg-muted shadow-[4px_4px_8px_rgba(0,0,0,0.15)] transition-transform duration-300 hover:-translate-y-2">
         {book.thumbnail_url ? (
           <Image
             src={book.thumbnail_url}
@@ -33,17 +33,39 @@ function CarouselCard({ book }: { book: Book }) {
   );
 }
 
+function useCarouselIndicator(api: CarouselApi | undefined) {
+  const subscribe = useCallback(
+    (onStoreChange: () => void) => {
+      if (!api) return () => {};
+      const onChange = () => onStoreChange();
+      api.on("select", onChange);
+      api.on("reInit", onChange);
+      return () => {
+        api.off("select", onChange);
+        api.off("reInit", onChange);
+      };
+    },
+    [api],
+  );
+
+  const current = useSyncExternalStore(
+    subscribe,
+    () => (api ? api.selectedScrollSnap() : 0),
+    () => 0,
+  );
+
+  const count = useSyncExternalStore(
+    subscribe,
+    () => (api ? api.scrollSnapList().length : 0),
+    () => 0,
+  );
+
+  return { current, count };
+}
+
 export default function BookCarousel({ books }: { books: Book[] }) {
   const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (!api) return;
-    setCount(api.scrollSnapList().length);
-    setCurrent(api.selectedScrollSnap());
-    api.on("select", () => setCurrent(api.selectedScrollSnap()));
-  }, [api]);
+  const { current, count } = useCarouselIndicator(api);
 
   const scrollTo = useCallback((index: number) => api?.scrollTo(index), [api]);
 

@@ -7,7 +7,7 @@ export default function BookCard({ book }: { book: Book }) {
 
   return (
     <Link href={href} className="group block">
-      <div className="relative aspect-[5/7] w-full overflow-hidden rounded-md bg-muted shadow-[4px_4px_8px_rgba(0,0,0,0.15)] transition-transform duration-300 hover:-translate-y-2">
+      <div className="relative aspect-5/7 w-full overflow-hidden rounded-md bg-muted shadow-[4px_4px_8px_rgba(0,0,0,0.15)] transition-transform duration-300 hover:-translate-y-2">
         {book.thumbnail_url ? (
           <Image
             src={book.thumbnail_url}
@@ -17,13 +17,17 @@ export default function BookCard({ book }: { book: Book }) {
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center bg-muted">
-            <span className="text-muted-foreground text-sm px-4 text-center">{book.title}</span>
+            <span className="text-muted-foreground text-sm px-4 text-center">
+              {book.title}
+            </span>
           </div>
         )}
       </div>
 
       <div className="mt-3 space-y-1">
-        <p className="text-sm font-semibold leading-snug line-clamp-2 font-display">{book.title}</p>
+        <p className="text-sm font-semibold leading-snug line-clamp-2 font-display">
+          {book.title}
+        </p>
         {book.category && (
           <p className="text-xs text-muted-foreground">{book.category}</p>
         )}
